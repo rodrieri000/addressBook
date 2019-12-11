@@ -1,0 +1,13 @@
+h1 {
+  margin-bottom: 0px;
+}
+.main {
+  display: flex;
+  flex-direction: row;
+}
+.user {
+  margin: 5px;
+}
+.info {
+  margin: 5px;
+}
