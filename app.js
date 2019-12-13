@@ -1,7 +1,6 @@
 let userData = {};
 let arrayOfUsers = [];
 
-
 window.onload = function() {
   getUsers();
 }
@@ -38,8 +37,11 @@ const namePic = () => {
     li.appendChild(pic)
     li.appendChild(text)
     
+    allUsers.append(li)
+  })
+}
+
 const moreInfo = (user, li) => {
   const text = document.createTextNode(`DOB: ${user.dob.date}, email: ${user.email}`)
   li.appendChild(text)
 }
-
