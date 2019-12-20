@@ -1,58 +1,61 @@
-let arrayOfUsers = [];
-let userData = {};
+const assert = require('assert')
 
+let userData = {};
+// let arrayOfUsers = [];
 
-// window.onload = function() {
-//   getUsers();
+// window.onload = function() {
+//   getUsers();
 // }
 
-
-const getUsers = () => {
-  fetch('https://randomuser.me/api/?results=100')
-    .then(res => res.json())
-    .then(posts => userData = users)
+const getUsers = (fetch, id) => {
+  return fetch('https://randomuser.me/api/?results=500/' + id)
+    .then(res => res.json())
+    .then(userData => userData.results[0])
 }
 
-const namePic = () => {
+const namePic = () => {
+  // const title = document.getElementById('title')
 
-  const allUsers = document.getElementById('all-users')
+  const allUsers = document.getElementById('all-users')
 
-  userData.results.map((users, index) => {
-    console.log(users)
-    const li = document.createElement('li')
-    const text = document.createTextNode(`#${index}, ${user.picture.medium}, First Name: ${users.name.first}, Last Name: ${users.name.last}`)
-    li.appendChild(text)
-    allUsers.append(li)
-  })
+  // while(allPosts.firstChild) {
+  //   allPosts.firstChild.remove()
+  // }
+
+  userData.results.map((user, index) => {
+    console.log(user)
+    const li = document.createElement('li')
+    const pic = document.createElement('img')
+    const button = document.createElement('button')
+    button.innerHTML = 'More info'
+    button.onclick = () => {
+      moreInfo(user, li)
+      button.onclick = null
+    }
+    pic.src = user.picture.medium
+    const text = document.createTextNode(`#${index}, First Name: ${user.name.first}, Last Name: ${user.name.last} `)
+    
+    li.appendChild(button)
+    li.appendChild(pic)
+    li.appendChild(text)
+    
+    allUsers.append(li)
+  })
 }
 
-const extraInfo = () => {
-
-  const miscInfo = document.getElementById('info')
-
-  userData.results.map((users, index) => {
-    // console.log(users)
-    const li = document.createElement('li')
-    const text = document.createTextNode(`Phone Number: ${user.phone}, Email: ${user.email}, DOB: ${user.dob.date}, Street: ${user.location.street}, City: ${user.location.city}, State: ${user.location.state}`)
-    li.appendChild(text)
-    miscInfo.append(li)
-  })
+const moreInfo = (user, li) => {
+  const text = document.createTextNode(`DOB: ${user.dob.date}, email: ${user.email}`)
+  li.appendChild(text)
 }
 
-const assert = require('assert')
 
-function getUsers(fetch, id) {
-  return fetch('https://randomuser.me/api/?results=100' + id)
-    .then(response => response.json())
-    .then(data => data.results[0])
-}
 
-describe('getUsers', () => {
-  it('calls fetch with the correct url', () => {
+describe('getUsers', function () {
+  it ('calls fetch with correct url', () => {
     const fakeFetch = url => {
       assert(
         url ===
-        'https://randomuser.me/api/?results=100'
+          'https://randomuser.me/api/?results=500/'
       )
       return new Promise(function(resolve) {
 
@@ -61,33 +64,67 @@ describe('getUsers', () => {
     getUsers(fakeFetch, '')
   })
 
-  it('identifies wrong api key', () => {
+  it ('calls fetch with wrong api key', () => {
     const fakeFetch = url => {
       assert(
         url ===
-        'https://randomuser.me/api/?results=100/123 + id'
+          'https://randomuser.me/api/?results=500/123'
       )
       return new Promise(function(resolve) {
 
       })
     }
-    getUsers(fakeFetch, '')
+    getUsers(fakeFetch, 123)
   })
 
-  // it('', (done) => {
-  //   const fakeFetch = () => {
-  //     return Promise.resolve({
-  //       json: () => Promise.resolve({
-  //         results: [
-  //           { name: 'fluffykins' }
-  //         ]
-  //       })
-  //     })
-  //   }
-  //   getAnimals(fakeFetch, 12345)
-  //     .then(result => {
-  //       assert(result.name === 'fluffykins')
-  //       done()
-  //     })
-  // })
+  it('identifies gender', (done) => {
+    const fakeFetch = url => {
+      return Promise.resolve({
+        json: () => Promise.resolve({
+          results: [
+            { gender: 'male'}
+          ]
+        })
+      })
+    }
+    getUsers(fakeFetch, '')
+      .then(result => {
+        assert(result.gender === 'male')
+        done()
+      })
+  })
+
+  it('gets name', (done) => {
+    const fakeFetch = url => {
+      return Promise.resolve({
+        json: () => Promise.resolve({
+          results: [
+            { name: 'Matt'}
+          ]
+        })
+      })
+    }
+    getUsers(fakeFetch, 123)
+      .then(result => {
+        assert(result.name === 'Matt')
+        done()
+      })
+  })
+
+  it('gets email', (done) => {
+    const fakeFetch = url => {
+      return Promise.resolve({
+        json: () => Promise.resolve({
+          results: [
+            { email: 'brad.gibson@example.com'}
+          ]
+        })
+      })
+    }
+    getUsers(fakeFetch, 123)
+      .then(result => {
+        assert(result.email === 'brad.gibson@example.com')
+        done()
+      })
+  })
 })
